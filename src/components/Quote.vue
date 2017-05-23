@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h2>{{ quoteText }}</h2>
-        <p>{{ quotePerson }}</p>
+        <h2 v-html="quoteText"></h2>
+        <p>- {{ quotePerson }}, {{ quoteYear }}</p>
         <button @click="getQuote()">New quote</button>
     </div>
 </template>
@@ -16,14 +16,22 @@ export default {
     data () {
         return {
             quotePerson: "",
-            quoteText: ""
+            quoteText: "",
+            quoteYear: Math.floor(Math.random() * 1000)
         }
     },
     methods: {
         getQuote: function () {
             axios.get("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand").then((response) => {
-                this.quotePerson = response.data[0].title;
-                this.quoteText = response.data[0].content.replace("<p>", "").replace("</p>", "");
+                this.quotePerson = response.data[0].title
+                this.quoteYear = 1000 + Math.floor(Math.random() * 1000)
+            }).catch((response) => {
+                console.log("Error:" + response)
+            })
+            axios.get("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand").then((response) => {
+                this.quoteText = response.data[0].content
+            }).catch((response) => {
+                console.log("Error:" + response)
             })
         }
     }
@@ -35,10 +43,12 @@ export default {
         max-width: 60%;
         margin: 0px auto;
         padding-top: 2em;
+        min-height: 3.5em;
     }
     button {
         font-size: 2em;
-        padding: 2em;
+        padding: 1em;
+        margin-bottom: 1em;
         background-color: transparent;
         border: none;
         &:active {
